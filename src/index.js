@@ -54,9 +54,21 @@ io.on("connection", (socket) => {
     callback();
   });
 
+  socket.on("typingMessage", (action) => {
+    const user = getUser(socket.id);
+    socket.broadcast.to(user.room).emit("typing", {
+      username: user.username,
+      action,
+    });
+  });
+
+  socket.on("typingFinished", () => {
+    const user = getUser(socket.id);
+    socket.broadcast.to(user.room).emit("typingFinished");
+  });
+
   socket.on("sendMessage", (message, callback) => {
     const user = getUser(socket.id);
-
     io.to(user.room).emit("message", generateMessage(user.username, message));
     callback();
   });

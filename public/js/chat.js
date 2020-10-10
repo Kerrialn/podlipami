@@ -7,6 +7,11 @@ const $sendMessageBtn = document.querySelector("#sendMessageBtn");
 const $geoLocationBtn = document.querySelector("#shareLocation");
 const $sidebar = document.querySelector("#sidebar");
 const $scrollToBottomBtn = document.querySelector("#scrollToBottom");
+const $typerInfo = document.querySelector("#typer-info");
+
+let typingTimer; //timer identifier
+let doneTypingInterval = 2000; //time in ms, 5 second for example
+
 $scrollToBottomBtn.style.display = "none";
 
 // Templates
@@ -16,10 +21,50 @@ const locationMessageTemplate = document.querySelector(
 ).innerHTML;
 const roomUserListTemplate = document.querySelector("#sidebar-template")
   .innerHTML;
+const typingTemplate = document.querySelector("#typing-template").innerHTML;
 
 // OPTIONS
 const { username, room } = Qs.parse(location.search, {
   ignoreQueryPrefix: true,
+});
+
+//on keyup, start the countdown
+$messageInput.addEventListener("keyup", () => {
+  clearTimeout(typingTimer);
+  typingTimer = setTimeout(doneTyping, doneTypingInterval);
+});
+
+//on keydown, clear the countdown
+$messageInput.addEventListener("keydown", (event) => {
+  const key = event.key;
+
+  if (key === "Backspace") {
+    socket.emit("typingMessage", "deleting...");
+  } else if (key !== "Backspace") {
+    socket.emit("typingMessage", "typing...");
+  } else {
+    $typerInfo.innerHTML = "";
+  }
+
+  clearTimeout(typingTimer);
+});
+
+const doneTyping = () => {
+  socket.emit("typingFinished");
+};
+
+socket.on("typingFinished", () => {
+  $typerInfo.innerHTML = "";
+});
+
+socket.on("typing", ({ username, action }) => {
+  $typerInfo.innerHTML = "";
+  const html = Mustache.render(typingTemplate, {
+    username,
+    action,
+  });
+
+  $typerInfo.innerHTML = html;
 });
 
 $messages.addEventListener("scroll", (event) => {

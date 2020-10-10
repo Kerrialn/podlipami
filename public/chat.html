@@ -12,7 +12,7 @@
       <div class="chat__sidebar" id="sidebar"></div>
       <div class="chat__main">
         <div id="messages" class="chat__messages"></div>
-
+        <div class="typer" id="typer-info"></div>
         <div class="compose">
           <form id="messageForm">
             <input
@@ -42,6 +42,13 @@
         </div>
       </div>
     </div>
+
+    <script id="typing-template" type="text/html">
+      <div class="typing">
+        {{username}} is {{action}}
+       </div>
+    </script>
+
 
     <script id="message-template" type="text/html">
       <div class="message">

@@ -8,6 +8,8 @@ const $geoLocationBtn = document.querySelector("#shareLocation");
 const $sidebar = document.querySelector("#sidebar");
 const $scrollToBottomBtn = document.querySelector("#scrollToBottom");
 const $typerInfo = document.querySelector("#typer-info");
+const $pageTitle = document.querySelector("#page-title");
+
 
 let typingTimer; //timer identifier
 let doneTypingInterval = 2000; //time in ms, 5 second for example
@@ -87,6 +89,18 @@ const scrollToBottom = (window) => {
 scrollToBottom($messages);
 
 socket.on("message", (message) => {
+
+  $pageTitle.innerHTML = `1 new message from ${message.username}`
+
+  var birdSound = new Audio('./files/notification.mp3');
+  birdSound.loop = false;
+  birdSound.play();
+
+  setTimeout(()=>{
+    $pageTitle.innerHTML = 'Chat App'
+  }, 2000)
+
+
   const html = Mustache.render(messageTemplate, {
     username: message.username,
     message: message.text,

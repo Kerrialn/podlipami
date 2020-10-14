@@ -89,18 +89,6 @@ const scrollToBottom = (window) => {
 scrollToBottom($messages);
 
 socket.on("message", (message) => {
-
-  $pageTitle.innerHTML = `1 new message from ${message.username}`
-
-  var birdSound = new Audio('./files/notification.mp3');
-  birdSound.loop = false;
-  birdSound.play();
-
-  setTimeout(()=>{
-    $pageTitle.innerHTML = 'Chat App'
-  }, 2000)
-
-
   const html = Mustache.render(messageTemplate, {
     username: message.username,
     message: message.text,
@@ -110,6 +98,12 @@ socket.on("message", (message) => {
 
   scrollToBottom($messages);
 });
+
+socket.on('messageSound', ()=>{
+  let messageSound = new Audio('./files/message-sound.mp3');
+  messageSound.loop = false;
+  messageSound.play();
+})
 
 socket.on("locationMessage", (message) => {
   const html = Mustache.render(locationMessageTemplate, {
